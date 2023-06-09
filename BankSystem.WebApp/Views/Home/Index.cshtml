@@ -1,0 +1,160 @@
+﻿@model HomeViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="container">
+    <div class="row justify-content-md-center">
+        @if (ViewBag.Message!=null)
+        {
+            <div class="col-8">
+                <div class="alert alert-@((ViewBag.Message as MessageViewModel).MessageType)" role="alert">
+                    @((ViewBag.Message as MessageViewModel).Message)
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                     Basic Bank System
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Hi @Model.AccountOwner</h5>
+                    <p class="card-text">Account management</p>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">Add Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>
+                            Account Id
+                        </th>
+                        <th>
+                            Balance
+                        </th>
+                        <th>
+                            Last transaction date
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Accounts)
+                    {
+                        <tr>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" onclick="javascript:showModal('Withdraw',@item.AccountId);" class="btn btn-primary">Withdraw</button>
+                                    <button type="button" onclick="javascript:showModal('Deposit',@item.AccountId);" class="btn btn-primary">Deposit</button>
+                                </div>
+                            </td>
+                            <td>
+                                @item.AccountId
+                            </td>
+                            <td>
+                                @item.Balance
+                            </td>
+                            <td>
+                                @item.Transactions.OrderByDescending(c=> c.TransactionDate).FirstOrDefault().TransactionDate
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="addAccountModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Account</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="CreateAccount">
+                    <div class="mb-3">
+                        <label for="amounttxt" class="form-label">Amount</label>
+                        <input type="text" data-val="true" data-val-number="Must be a number."
+                               data-val-greaterThan-number="100"
+                               data-val-greaterThan="Amount should be greather than $100"
+                               data-val-required="Amount is required."
+                        class="form-control" id="amounttxt" name="amount">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="amount" data-valmsg-replace="true"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transactionmodal" tabindex="-1" aria-labelledby="transactionmodal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalLabel">Withdraw</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Transaction">
+                    <div class="mb-3">
+                        <input type="hidden" id="hftransactionType" name="transactionType" value="" />
+                        <input type="hidden" id="hfbalance" name="balance" value="" />
+                        <input type="hidden" id="hfaccountId" name="accountId" value="0" />
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="text" data-val="true" data-val-number="Must be a number."
+                               data-val-greaterThan-number="0"
+                               data-val-greaterThan="Amount should be greather than 0"
+                               data-val-required="Amount is required."
+                               class="form-control" name="amount">
+                        <span class="text-danger field-validation-valid" data-valmsg-for="amount" data-valmsg-replace="true"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script type="text/javascript">
+        function showModal(transactionType,accountid){
+            $('#transactionmodal').modal('show');
+            $('#hftransactionType').val(transactionType);
+            $("#modalLabel").text(transactionType)
+            $('#hfaccountId').val(accountid);
+        }
+        $(function(){
+            const transactionModal = document.getElementById('transactionmodal');
+            transactionModal.addEventListener('hidden.bs.modal', event => {
+                $('#hftransactionType').val("");
+                $('#hfaccountId').val("");
+                $("#modalLabel").text("")
+            });
+        });
+        jQuery.validator.addMethod("greaterThan", function(value, element, params) {
+            return (Number(value) > Number(params.number));
+       
+        });
+        jQuery.validator.unobtrusive.adapters.add(
+            'greaterThan', ['number'], function (options) {
+                options.rules['greaterThan'] = 
+                {
+                    number:options.params.number
+                };
+                options.messages['greaterThan'] = options.message;
+            }
+        );
+    </script>
+}

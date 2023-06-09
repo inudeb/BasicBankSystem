@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BankSystem.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:BankSystem.WebAPI.Controllers.AccountController.GetAccounts(System.Int32)">
+            <summary>
+            Get a list of the accounts filtered by user id
+            </summary>
+            <param name="userid">User Id</param>
+            <returns></returns>
+        </member>
+        <member name="M:BankSystem.WebAPI.Controllers.AccountController.CreateAccount(BankSystem.Domain.CreateAccountRequest)">
+            <summary>
+            Create an account for an user
+            </summary>
+            <param name="userId">User ID</param>
+            <param name="balance">Account initial balanace</param>
+            <returns>Created account</returns>
+        </member>
+        <member name="M:BankSystem.WebAPI.Controllers.AccountController.Withdraw(BankSystem.Domain.TransactionRequest)">
+            <summary>
+            Execute a witdraw from an account
+            </summary>
+            <param name="accountId">Account id</param>
+            <param name="amount">The amount is going to be withdraw</param>
+            <returns>Affected account</returns>
+        </member>
+        <member name="M:BankSystem.WebAPI.Controllers.AccountController.Deposit(BankSystem.Domain.TransactionRequest)">
+            <summary>
+            Execute a deposit to an account
+            </summary>
+            <param name="accountId">Account id</param>
+            <param name="amount">The amount is going to be withdraw</param>
+            <returns>Affected account</returns>
+        </member>
+        <member name="M:BankSystem.WebAPI.Controllers.UserController.Authenticate(BankSystem.Domain.AuthenticationRequest)">
+            <summary>
+            This endpoint authenticate a user, if the user is not registered then is created
+            </summary>
+            <param name="username">User name</param>
+            <param name="password">Password</param>
+            <returns>A Service Result for User Entity</returns>
+        </member>
+        <member name="M:BankSystem.WebAPI.Controllers.UserController.GetUserData(System.Int32)">
+            <summary>
+            Returns a service result with an user data
+            </summary>
+            <param name="userId">User Id</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
